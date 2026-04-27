@@ -14,6 +14,7 @@ import { Label } from '@/components/ui/label';
 import Image from 'next/image';
 import { Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 
 export default function AdminPage() {
   const [url, setUrl] = useState('');
@@ -30,6 +31,8 @@ export default function AdminPage() {
   });
 
   const [existingGifts, setExistingGifts] = useState<any[]>([]);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const fetchGifts = async () => {
     try {
@@ -110,12 +113,23 @@ export default function AdminPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('¿Eliminar regalo?')) return;
+    setDeleteId(id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteId) return;
     try {
-      const res = await fetch(`/api/admin/gifts/${id}`, { method: 'DELETE' });
-      if (res.ok) fetchGifts();
+      const res = await fetch(`/api/admin/gifts/${deleteId}`, { method: 'DELETE' });
+      if (res.ok) {
+        toast.success('Regalo eliminado');
+        fetchGifts();
+      }
     } catch (e) {
       console.error(e);
+      toast.error('Error al eliminar');
+    } finally {
+      setDeleteId(null);
     }
   };
 
@@ -140,201 +154,212 @@ export default function AdminPage() {
   };
 
   return (
-    <div className="space-y-12">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-            Panel de Administrador
-          </h1>
-          <p className="text-gray-500">
-            Agrega nuevos regalos pegando un link de MercadoLibre.
-          </p>
+    <>
+      <div className="space-y-12">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 gap-4">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+              Panel de Administrador
+            </h1>
+            <p className="text-gray-500">
+              Agrega nuevos regalos pegando un link de MercadoLibre.
+            </p>
+          </div>
+          <Button
+            onClick={() => (window.location.href = '/admin/reservas')}
+            className="bg-primary hover:bg-primary/90 text-white font-bold h-12 px-6 shadow border border-primary/20"
+          >
+            👀 Ver Lista de Reservas
+          </Button>
         </div>
-        <Button
-          onClick={() => (window.location.href = '/admin/reservas')}
-          className="bg-primary hover:bg-primary/90 text-white font-bold h-12 px-6 shadow border border-primary/20"
-        >
-          👀 Ver Lista de Reservas
-        </Button>
-      </div>
 
-      <div className="grid lg:grid-cols-2 gap-8">
-        {/* Formulario de Scraping */}
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>1. Link de MercadoLibre</CardTitle>
-              <CardDescription>
-                Copia y pega la URL del producto que quieres añadir a la lista
-                de regalos.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleScrape} className="flex gap-2">
-                <Input
-                  placeholder="https://articulo.mercadolibre.com.co/..."
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                  required
-                />
-                <Button type="submit" disabled={loadingScrape || !url}>
-                  {loadingScrape ? 'Buscando...' : 'Extraer Data'}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
-
-          {/* Formulario de Edición (Preview) */}
-          {giftData.name !== '' && (
-            <Card className="border-primary/20 bg-white shadow-md">
-              <CardHeader>
-                <CardTitle>2. Revisa y Guarda</CardTitle>
+        <div className="grid lg:grid-cols-2 gap-8">
+          {/* Formulario de Scraping */}
+          <div className="space-y-6">
+            <Card className="p-0">
+              <CardHeader className="pt-6 px-6 pb-4">
+                <CardTitle>1. Link de MercadoLibre</CardTitle>
                 <CardDescription>
-                  Confirma la información extraída y ajústala si es necesario.
+                  Copia y pega la URL del producto que quieres añadir a la lista
+                  de regalos.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label className="text-primary font-semibold">Nombre del Regalo</Label>
+              <CardContent className="px-6 pb-6">
+                <form onSubmit={handleScrape} className="flex gap-2">
                   <Input
-                    className="bg-white border-primary/20 focus-visible:ring-primary/20"
-                    value={giftData.name}
-                    onChange={(e) =>
-                      setGiftData({ ...giftData, name: e.target.value })
-                    }
+                    placeholder="https://articulo.mercadolibre.com.co/..."
+                    value={url}
+                    onChange={(e) => setUrl(e.target.value)}
+                    required
                   />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label className="text-primary font-semibold">Precio (COP)</Label>
-                    <Input
-                      type="number"
-                      className="bg-white border-primary/20 focus-visible:ring-primary/20"
-                      value={giftData.price}
-                      onChange={(e) =>
-                        setGiftData({
-                          ...giftData,
-                          price: parseInt(e.target.value) || 0,
-                        })
-                      }
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-primary font-semibold">Cantidad/Stock</Label>
-                    <Input
-                      type="number"
-                      min={1}
-                      className="bg-white border-primary/20 focus-visible:ring-primary/20"
-                      value={giftData.stock}
-                      onChange={(e) =>
-                        setGiftData({
-                          ...giftData,
-                          stock: parseInt(e.target.value) || 1,
-                        })
-                      }
-                    />
-                  </div>
-                </div>
+                  <Button type="submit" disabled={loadingScrape || !url}>
+                    {loadingScrape ? 'Buscando...' : 'Extraer Data'}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
 
-                <div className="space-y-2">
-                  <Label className="text-primary font-semibold">Fotos (Muestra)</Label>
-                  <div className="flex gap-4 overflow-x-auto py-2 px-1">
-                    {giftData.photos.map((src, idx) => (
-                      <div
-                        key={idx}
-                        className="relative h-24 w-24 shrink-0 rounded-xl overflow-hidden border-2 border-primary/10 shadow-sm"
-                      >
+            {/* Formulario de Edición (Preview) */}
+            {giftData.name !== '' && (
+              <Card className="border-primary/20 bg-white shadow-md p-0">
+                <CardHeader className="pt-6 px-6 pb-4">
+                  <CardTitle>2. Revisa y Guarda</CardTitle>
+                  <CardDescription>
+                    Confirma la información extraída y ajústala si es necesario.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4 px-6 pb-6">
+                  <div className="space-y-2">
+                    <Label className="text-primary font-semibold">Nombre del Regalo</Label>
+                    <Input
+                      className="bg-white border-primary/20 focus-visible:ring-primary/20"
+                      value={giftData.name}
+                      onChange={(e) =>
+                        setGiftData({ ...giftData, name: e.target.value })
+                      }
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-primary font-semibold">Precio (COP)</Label>
+                      <Input
+                        type="number"
+                        className="bg-white border-primary/20 focus-visible:ring-primary/20"
+                        value={giftData.price}
+                        onChange={(e) =>
+                          setGiftData({
+                            ...giftData,
+                            price: parseInt(e.target.value) || 0,
+                          })
+                        }
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-primary font-semibold">Cantidad/Stock</Label>
+                      <Input
+                        type="number"
+                        min={1}
+                        className="bg-white border-primary/20 focus-visible:ring-primary/20"
+                        value={giftData.stock}
+                        onChange={(e) =>
+                          setGiftData({
+                            ...giftData,
+                            stock: parseInt(e.target.value) || 1,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-primary font-semibold">Fotos (Muestra)</Label>
+                    <div className="flex gap-4 overflow-x-auto py-2 px-1">
+                      {giftData.photos.map((src, idx) => (
+                        <div
+                          key={idx}
+                          className="relative h-24 w-24 shrink-0 rounded-xl overflow-hidden border-2 border-primary/10 shadow-sm"
+                        >
+                          <Image
+                            src={src}
+                            alt="Preview"
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                      ))}
+                      {giftData.photos.length === 0 && (
+                        <div className="h-24 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-xl w-full">
+                          <span className="text-sm text-gray-400 italic font-serif">Sin fotos disponibles</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <Button
+                    className="w-full font-bold text-lg py-6 rounded-xl shadow-lg hover:shadow-xl transition-all"
+                    onClick={handleSaveGift}
+                    disabled={loadingSave}
+                  >
+                    {loadingSave ? 'Guardando en BD...' : 'Guardar Regalo'}
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+          </div>
+
+          {/* Lista de Regalos Existentes */}
+          <Card className="p-0">
+            <CardHeader className="pt-6 px-6 pb-4">
+              <CardTitle>Inventario Actual</CardTitle>
+              <CardDescription>
+                Estos son los regalos que ya cargaste a la BD.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="px-6 pb-6">
+              <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
+                {existingGifts.map((gift) => (
+                  <div
+                    key={gift._id}
+                    className="flex items-center gap-3 border p-3 rounded-lg bg-white"
+                  >
+                    <div className="relative h-12 w-12 rounded-sm overflow-hidden bg-gray-100 shrink-0">
+                      {gift.photos?.[0] && (
                         <Image
-                          src={src}
-                          alt="Preview"
+                          src={gift.photos[0]}
+                          alt=""
                           fill
                           className="object-cover"
                         />
-                      </div>
-                    ))}
-                    {giftData.photos.length === 0 && (
-                      <div className="h-24 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-xl w-full">
-                        <span className="text-sm text-gray-400 italic font-serif">Sin fotos disponibles</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                <Button
-                  className="w-full font-bold text-lg py-6 rounded-xl shadow-lg hover:shadow-xl transition-all"
-                  onClick={handleSaveGift}
-                  disabled={loadingSave}
-                >
-                  {loadingSave ? 'Guardando en BD...' : 'Guardar Regalo'}
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        {/* Lista de Regalos Existentes */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Inventario Actual</CardTitle>
-            <CardDescription>
-              Estos son los regalos que ya cargaste a la BD.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
-              {existingGifts.map((gift) => (
-                <div
-                  key={gift._id}
-                  className="flex items-center gap-3 border p-3 rounded-lg bg-white"
-                >
-                  <div className="relative h-12 w-12 rounded-sm overflow-hidden bg-gray-100 shrink-0">
-                    {gift.photos?.[0] && (
-                      <Image
-                        src={gift.photos[0]}
-                        alt=""
-                        fill
-                        className="object-cover"
-                      />
-                    )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-sm text-gray-900 truncate">
-                      {gift.name}
-                    </h4>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[10px] uppercase font-semibold text-gray-400">Stock:</span>
-                      <Input
-                        key={`${gift._id}-${gift.stock}`}
-                        type="number"
-                        className="h-7 w-16 text-xs"
-                        defaultValue={gift.stock}
-                        onBlur={(e) => {
-                          const val = parseInt(e.target.value);
-                          if (val !== gift.stock) handleUpdateStock(gift._id, val);
-                        }}
-                      />
-                      <span className="text-[10px] text-gray-400 uppercase">Estado: {gift.status}</span>
+                      )}
                     </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-sm text-gray-900 truncate">
+                        {gift.name}
+                      </h4>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-[10px] uppercase font-semibold text-gray-400">Stock:</span>
+                        <Input
+                          key={`${gift._id}-${gift.stock}`}
+                          type="number"
+                          className="h-7 w-16 text-xs"
+                          defaultValue={gift.stock}
+                          onBlur={(e) => {
+                            const val = parseInt(e.target.value);
+                            if (val !== gift.stock) handleUpdateStock(gift._id, val);
+                          }}
+                        />
+                        <span className="text-[10px] text-gray-400 uppercase">Estado: {gift.status}</span>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-rose-500"
+                      onClick={() => handleDelete(gift._id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="text-rose-500"
-                    onClick={() => handleDelete(gift._id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-              {existingGifts.length === 0 && (
-                <p className="text-sm text-gray-400 text-center py-4">
-                  No has cargado regalos aún.
-                </p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+                ))}
+                {existingGifts.length === 0 && (
+                  <p className="text-sm text-gray-400 text-center py-4">
+                    No has cargado regalos aún.
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
-    </div>
+      <ConfirmationDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        title="¿Eliminar Regalo?"
+        description="Esta acción no se puede deshacer. El regalo se borrará permanentemente de la lista."
+        confirmText="Sí, eliminar"
+        cancelText="No, cancelar"
+        onConfirm={confirmDelete}
+      />
+    </>
   );
 }
