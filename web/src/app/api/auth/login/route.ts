@@ -7,19 +7,22 @@ export async function POST(req: NextRequest) {
   try {
     const { name, phone } = await req.json();
 
-    if (!name || !phone) {
+    if (!phone) {
       return NextResponse.json(
-        { error: 'Name and phone are required' },
+        { error: 'El número de teléfono es requerido' },
         { status: 400 },
       );
     }
 
     await connectToDatabase();
 
-    // Logica de creación o login
     let user = await User.findOne({ phone });
 
     if (!user) {
+      if (!name) {
+        return NextResponse.json({ needsRegistration: true });
+      }
+      
       // Si el teléfono es el designado para admin
       const role = phone === '3013887536' ? 'admin' : 'guest';
       user = await User.create({ name, phone, role });

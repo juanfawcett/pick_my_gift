@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { ShoppingCart } from 'lucide-react';
+import { ShoppingCart, LogOut, Gift } from 'lucide-react';
 import { useCartStore } from '@/store/cart';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 
 export function Navbar({
@@ -15,6 +16,17 @@ export function Navbar({
 }) {
   const itemsCount = useCartStore((state) => state.totalItems());
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      router.push('/');
+      router.refresh();
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -44,6 +56,12 @@ export function Navbar({
               </Button>
             </Link>
           )}
+          <Link href="/mis-regalos">
+            <Button variant="ghost" size="sm" className="text-gray-600 hover:text-primary hover:bg-primary/10">
+              <Gift className="h-5 w-5 mr-1" />
+              <span className="hidden sm:inline-block">Mis Regalos</span>
+            </Button>
+          </Link>
           <Link href="/carrito">
             <Button variant="ghost" size="sm" className="relative">
               <ShoppingCart className="h-5 w-5 text-gray-700" />
@@ -54,6 +72,15 @@ export function Navbar({
               )}
             </Button>
           </Link>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleLogout}
+            className="text-gray-500 hover:text-red-600 hover:bg-red-50 ml-1"
+            title="Cerrar sesión"
+          >
+            <LogOut className="h-5 w-5" />
+          </Button>
         </div>
       </div>
     </header>

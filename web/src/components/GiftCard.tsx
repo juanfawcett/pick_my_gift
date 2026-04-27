@@ -3,7 +3,7 @@
 import { useCartStore } from '@/store/cart';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Minus, Plus, ShoppingCart } from 'lucide-react';
+import { Minus, Plus, ShoppingCart, ExternalLink } from 'lucide-react';
 import Image from 'next/image';
 import {
   Dialog,
@@ -22,6 +22,7 @@ interface Gift {
   stock: number;
   photos: string[];
   description?: string;
+  urlML?: string;
   status: 'available' | 'unavailable';
 }
 
@@ -123,6 +124,20 @@ export function GiftCard({ gift }: { gift: Gift }) {
 
         {gift.description && (
           <p className="text-sm text-gray-600 mb-4">{gift.description}</p>
+        )}
+
+        {gift.urlML && (
+          <div className="mb-4">
+            <a
+              href={gift.urlML}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline"
+            >
+              <ExternalLink className="h-4 w-4 mr-1" />
+              Ver referencia en Mercado Libre
+            </a>
+          </div>
         )}
 
         <div className="flex flex-col gap-4">
