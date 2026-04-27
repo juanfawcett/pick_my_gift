@@ -12,11 +12,20 @@ export async function POST(req: NextRequest) {
     const isML = url.includes('mercadolibre');
     const isAmazon = url.includes('amazon');
 
-    if (!isML && !isAmazon) {
-      return NextResponse.json(
-        { error: 'URL inválida. Debe ser de MercadoLibre o Amazon.' },
-        { status: 400 },
-      );
+    let title = '';
+    let price = 0;
+    let photos: string[] = [];
+    let storeName = '';
+
+    if (isML) storeName = 'Mercado Libre';
+    else if (isAmazon) storeName = 'Amazon';
+    else {
+      try {
+        const domain = new URL(url).hostname.replace('www.', '').split('.')[0];
+        storeName = domain.charAt(0).toUpperCase() + domain.slice(1);
+      } catch {
+        storeName = 'Tienda';
+      }
     }
 
     const response = await fetch(url, {
@@ -28,15 +37,19 @@ export async function POST(req: NextRequest) {
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch page: ${response.status}`);
+      // Si falla la petición pero la URL parece válida, devolvemos data vacía para llenar manual
+      return NextResponse.json({
+        title: '',
+        price: 0,
+        photos: [],
+        url,
+        storeName,
+        manual: true
+      });
     }
 
     const html = await response.text();
     const $ = cheerio.load(html);
-
-    let title = '';
-    let price = 0;
-    let photos: string[] = [];
 
     if (isML) {
       // Lógica MercadoLibre
@@ -63,14 +76,10 @@ export async function POST(req: NextRequest) {
               $('meta[property="og:title"]').attr('content') || 
               'Producto de Amazon';
 
-      // Precio Amazon (a-price-whole + a-price-fraction)
       const priceWhole = $('.a-price-whole').first().text().replace(/\D/g, '');
-      const priceFraction = $('.a-price-fraction').first().text().replace(/\D/g, '');
-      
       if (priceWhole) {
         price = parseInt(priceWhole, 10);
       } else {
-        // Fallback meta
         const metaPrice = $('meta[property="product:price:amount"]').attr('content');
         if (metaPrice) price = parseInt(metaPrice.replace(/\D/g, ''), 10);
       }
@@ -79,15 +88,25 @@ export async function POST(req: NextRequest) {
                       $('meta[property="og:image"]').attr('content');
       if (mainImg) photos.push(mainImg);
 
-      // Buscar más imágenes en el carrusel de Amazon
       $('#altImages ul li img').each((i, el) => {
         const src = $(el).attr('src');
         if (src && src.includes('._AC_') && !photos.includes(src)) {
-            // Intentar obtener la versión de alta resolución reemplazando el sufijo AC
             const hiRes = src.replace(/\._AC_.*_\./, '.');
             photos.push(hiRes);
         }
       });
+    } else {
+      // Lógica Genérica
+      title = $('meta[property="og:title"]').attr('content') || $('title').text().trim() || '';
+      const mainImg = $('meta[property="og:image"]').attr('content');
+      if (mainImg) photos.push(mainImg);
+      
+      // Intentar buscar precio en metas comunes
+      const metaPrice = $('meta[property="product:price:amount"]').attr('content') || 
+                        $('meta[name="twitter:data1"]').attr('content');
+      if (metaPrice) {
+        price = parseInt(metaPrice.replace(/\D/g, ''), 10) || 0;
+      }
     }
 
     // Truncar título si es muy largo para no dañar el diseño
@@ -98,6 +117,7 @@ export async function POST(req: NextRequest) {
       price,
       photos: photos.filter(p => p.startsWith('http')).slice(0, 5),
       url,
+      storeName,
     });
   } catch (error: any) {
     console.error('Scraping error:', error);

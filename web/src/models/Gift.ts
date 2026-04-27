@@ -17,6 +17,7 @@ const GiftSchema: Schema = new Schema(
     price: { type: Number, required: true },
     photos: [{ type: String }],
     urlML: { type: String },
+    storeName: { type: String },
     stock: { type: Number, required: true, default: 1 },
     status: {
       type: String,

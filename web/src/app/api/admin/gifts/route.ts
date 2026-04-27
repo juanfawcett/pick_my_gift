@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
       price: data.price,
       photos: data.photos || [],
       urlML: data.urlML || '',
+      storeName: data.storeName || '',
       stock: data.stock,
       status: data.stock > 0 ? 'available' : 'unavailable',
     });

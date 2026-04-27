@@ -33,6 +33,7 @@ interface Gift {
   photos: string[];
   description?: string;
   urlML?: string;
+  storeName?: string;
   status: 'available' | 'unavailable';
 }
 
@@ -178,7 +179,7 @@ export function GiftCard({ gift }: { gift: Gift }) {
                   className="flex items-center justify-center w-full bg-primary hover:bg-primary/90 text-white font-bold py-3.5 px-4 rounded-2xl shadow-md hover:shadow-lg transition-all active:scale-[0.98] text-sm group/ml"
                 >
                   <ExternalLink className="h-4 w-4 mr-2 group-hover/ml:translate-x-0.5 group-hover/ml:-translate-y-0.5 transition-transform" />
-                  Ver detalles en {gift.urlML.includes('amazon') ? 'Amazon' : 'Mercado Libre'}
+                  Ver detalles en {gift.storeName || (gift.urlML.includes('amazon') ? 'Amazon' : 'Mercado Libre')}
                 </a>
               )}
 

@@ -27,8 +27,11 @@ export default function AdminPage() {
     price: 0,
     stock: 1,
     urlML: '',
+    storeName: '',
     photos: [] as string[],
   });
+
+  const [newPhotoUrl, setNewPhotoUrl] = useState('');
 
   const [existingGifts, setExistingGifts] = useState<any[]>([]);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -69,6 +72,7 @@ export default function AdminPage() {
           price: data.price || 0,
           stock: 1, // Asumimos 1 por defecto, tú puedes cambiarlo manual
           urlML: url,
+          storeName: data.storeName || '',
           photos: data.photos || [],
         });
       } else {
@@ -99,7 +103,7 @@ export default function AdminPage() {
         toast.success('¡Regalo guardado con éxito!');
         fetchGifts();
         setUrl('');
-        setGiftData({ name: '', price: 0, stock: 1, urlML: '', photos: [] });
+        setGiftData({ name: '', price: 0, stock: 1, urlML: '', storeName: '', photos: [] });
       } else {
         const err = await res.json();
         toast.error(err.error || 'No se pudo guardar');
@@ -219,6 +223,19 @@ export default function AdminPage() {
                       }
                     />
                   </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-primary font-semibold">Nombre de la Tienda (Marketplace)</Label>
+                    <Input
+                      placeholder="Ej: Falabella, Pepe Ganga, Lego Store..."
+                      className="bg-white border-primary/20 focus-visible:ring-primary/20"
+                      value={giftData.storeName}
+                      onChange={(e) =>
+                        setGiftData({ ...giftData, storeName: e.target.value })
+                      }
+                    />
+                  </div>
+
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label className="text-primary font-semibold">Precio (COP)</Label>
@@ -252,12 +269,33 @@ export default function AdminPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-primary font-semibold">Fotos (Muestra)</Label>
+                    <Label className="text-primary font-semibold">Fotos del Producto</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Pega el link de una foto..."
+                        value={newPhotoUrl}
+                        onChange={(e) => setNewPhotoUrl(e.target.value)}
+                        className="flex-1 text-xs"
+                      />
+                      <Button 
+                        type="button" 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => {
+                          if (newPhotoUrl) {
+                            setGiftData({ ...giftData, photos: [...giftData.photos, newPhotoUrl] });
+                            setNewPhotoUrl('');
+                          }
+                        }}
+                      >
+                        Añadir
+                      </Button>
+                    </div>
                     <div className="flex gap-4 overflow-x-auto py-2 px-1">
                       {giftData.photos.map((src, idx) => (
                         <div
                           key={idx}
-                          className="relative h-24 w-24 shrink-0 rounded-xl overflow-hidden border-2 border-primary/10 shadow-sm"
+                          className="relative h-24 w-24 shrink-0 rounded-xl overflow-hidden border-2 border-primary/10 shadow-sm group/photo"
                         >
                           <Image
                             src={src}
@@ -265,11 +303,17 @@ export default function AdminPage() {
                             fill
                             className="object-cover"
                           />
+                          <button 
+                            className="absolute top-1 right-1 bg-rose-500 text-white rounded-full p-1 opacity-0 group-hover/photo:opacity-100 transition-opacity"
+                            onClick={() => setGiftData({ ...giftData, photos: giftData.photos.filter((_, i) => i !== idx) })}
+                          >
+                            <Trash2 className="h-3 w-3" />
+                          </button>
                         </div>
                       ))}
                       {giftData.photos.length === 0 && (
                         <div className="h-24 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-xl w-full">
-                          <span className="text-sm text-gray-400 italic font-serif">Sin fotos disponibles</span>
+                          <span className="text-sm text-gray-400 italic font-serif">Sin fotos. Agrega una arriba.</span>
                         </div>
                       )}
                     </div>
