@@ -54,7 +54,7 @@ export default function Home() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background p-4">
+    <div className="flex items-center justify-center min-h-screen p-4">
       <Card className="w-full max-w-md shadow-lg border-primary/20">
         <CardHeader className="text-center space-y-2">
           <div className="mx-auto bg-primary/10 rounded-full p-4 mb-2 inline-block">

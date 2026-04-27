@@ -59,7 +59,7 @@ export function GiftCarousel({ photos, name }: GiftCarouselProps) {
               <button
                 key={i}
                 onClick={() => setCurrentPhotoIndex(i)}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
+                className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
                   i === currentPhotoIndex ? 'bg-primary w-4' : 'bg-white/70 w-1.5 hover:bg-white'
                 }`}
               />

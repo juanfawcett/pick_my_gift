@@ -52,6 +52,7 @@ export function GiftCard({ gift }: { gift: Gift }) {
   return (
     <Dialog>
       <DialogTrigger
+        nativeButton={false}
         render={
           <Card
             className={`overflow-hidden cursor-pointer hover:shadow-md transition-all group ${!isAvailable ? 'opacity-50 grayscale' : ''}`}
@@ -88,10 +89,11 @@ export function GiftCard({ gift }: { gift: Gift }) {
               {new Intl.NumberFormat('es-CO', {
                 style: 'currency',
                 currency: 'COP',
+                minimumFractionDigits: 0,
               }).format(gift.price)}
             </span>
             <span className="text-gray-500 font-normal">
-              Disp: {maxAvailable}
+              Disponibles: {maxAvailable}
             </span>
           </div>
         </CardContent>
@@ -104,6 +106,7 @@ export function GiftCard({ gift }: { gift: Gift }) {
             {new Intl.NumberFormat('es-CO', {
               style: 'currency',
               currency: 'COP',
+              minimumFractionDigits: 0,
             }).format(gift.price)}
           </DialogDescription>
         </DialogHeader>

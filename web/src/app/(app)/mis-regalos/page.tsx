@@ -90,6 +90,7 @@ export default async function MisRegalosPage() {
             return (
               <Dialog key={idx}>
                 <DialogTrigger
+                  nativeButton={false}
                   render={
                     <Card className="overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer text-left h-full" />
                   }
@@ -123,6 +124,7 @@ export default async function MisRegalosPage() {
                           {new Intl.NumberFormat('es-CO', {
                             style: 'currency',
                             currency: 'COP',
+                            minimumFractionDigits: 0,
                           }).format(item.priceAtPurchase)}
                         </span>
                         <span className="text-xs font-medium bg-gray-100 px-2 py-1 rounded-md text-gray-600">

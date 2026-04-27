@@ -122,6 +122,7 @@ export default function CartPage() {
                       {new Intl.NumberFormat('es-CO', {
                         style: 'currency',
                         currency: 'COP',
+                        minimumFractionDigits: 0,
                       }).format(item.price)}
                     </div>
 
@@ -175,6 +176,7 @@ export default function CartPage() {
                   {new Intl.NumberFormat('es-CO', {
                     style: 'currency',
                     currency: 'COP',
+                    minimumFractionDigits: 0,
                   }).format(totalPrice())}
                 </span>
               </div>
@@ -187,6 +189,7 @@ export default function CartPage() {
                   {new Intl.NumberFormat('es-CO', {
                     style: 'currency',
                     currency: 'COP',
+                    minimumFractionDigits: 0,
                   }).format(totalPrice())}
                 </span>
               </div>
