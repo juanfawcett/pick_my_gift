@@ -13,6 +13,7 @@ import {
 import { Label } from '@/components/ui/label';
 import Image from 'next/image';
 import { Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function AdminPage() {
   const [url, setUrl] = useState('');
@@ -68,11 +69,11 @@ export default function AdminPage() {
           photos: data.photos || [],
         });
       } else {
-        alert(data.error);
+        toast.error(data.error);
       }
     } catch (error) {
       console.error(error);
-      alert('Error al intentar sacar la información.');
+      toast.error('Error al intentar extraer la información.');
     } finally {
       setLoadingScrape(false);
     }
@@ -80,7 +81,7 @@ export default function AdminPage() {
 
   const handleSaveGift = async () => {
     if (!giftData.name || giftData.price <= 0 || giftData.stock <= 0) {
-      return alert('El nombre, precio y stock son obligatorios');
+      return toast.warning('El nombre, precio y stock son obligatorios');
     }
 
     setLoadingSave(true);
@@ -92,17 +93,17 @@ export default function AdminPage() {
       });
 
       if (res.ok) {
-        alert('¡Regalo guardado con éxito!');
+        toast.success('¡Regalo guardado con éxito!');
         fetchGifts();
         setUrl('');
         setGiftData({ name: '', price: 0, stock: 1, urlML: '', photos: [] });
       } else {
         const err = await res.json();
-        alert(err.error || 'No se pudo guardar');
+        toast.error(err.error || 'No se pudo guardar');
       }
     } catch (err) {
       console.error(err);
-      alert('Error de conexión');
+      toast.error('Error de conexión');
     } finally {
       setLoadingSave(false);
     }
@@ -119,7 +120,7 @@ export default function AdminPage() {
   };
 
   const handleUpdateStock = async (id: string, newStock: number) => {
-    if (newStock < 0) return alert('El stock no puede ser negativo');
+    if (newStock < 0) return toast.warning('El stock no puede ser negativo');
     try {
       const res = await fetch(`/api/admin/gifts/${id}`, {
         method: 'PATCH',
@@ -127,13 +128,14 @@ export default function AdminPage() {
         body: JSON.stringify({ stock: newStock }),
       });
       if (res.ok) {
+        toast.success('Stock actualizado');
         fetchGifts();
       } else {
-        alert('No se pudo actualizar el stock');
+        toast.error('No se pudo actualizar el stock');
       }
     } catch (e) {
       console.error(e);
-      alert('Error de conexión');
+      toast.error('Error de conexión');
     }
   };
 
@@ -184,7 +186,7 @@ export default function AdminPage() {
 
           {/* Formulario de Edición (Preview) */}
           {giftData.name !== '' && (
-            <Card className="border-primary/40 bg-primary/5">
+            <Card className="border-primary/20 bg-white shadow-md">
               <CardHeader>
                 <CardTitle>2. Revisa y Guarda</CardTitle>
                 <CardDescription>
@@ -193,8 +195,9 @@ export default function AdminPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <Label>Nombre del Regalo</Label>
+                  <Label className="text-primary font-semibold">Nombre del Regalo</Label>
                   <Input
+                    className="bg-white border-primary/20 focus-visible:ring-primary/20"
                     value={giftData.name}
                     onChange={(e) =>
                       setGiftData({ ...giftData, name: e.target.value })
@@ -203,9 +206,10 @@ export default function AdminPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label>Precio (COP)</Label>
+                    <Label className="text-primary font-semibold">Precio (COP)</Label>
                     <Input
                       type="number"
+                      className="bg-white border-primary/20 focus-visible:ring-primary/20"
                       value={giftData.price}
                       onChange={(e) =>
                         setGiftData({
@@ -216,10 +220,11 @@ export default function AdminPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Cantidad/Stock</Label>
+                    <Label className="text-primary font-semibold">Cantidad/Stock</Label>
                     <Input
                       type="number"
                       min={1}
+                      className="bg-white border-primary/20 focus-visible:ring-primary/20"
                       value={giftData.stock}
                       onChange={(e) =>
                         setGiftData({
@@ -232,12 +237,12 @@ export default function AdminPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label>Fotos (Muestra)</Label>
-                  <div className="flex gap-4 overflow-x-auto py-2">
+                  <Label className="text-primary font-semibold">Fotos (Muestra)</Label>
+                  <div className="flex gap-4 overflow-x-auto py-2 px-1">
                     {giftData.photos.map((src, idx) => (
                       <div
                         key={idx}
-                        className="relative h-20 w-20 shrink-0 rounded-md overflow-hidden border"
+                        className="relative h-24 w-24 shrink-0 rounded-xl overflow-hidden border-2 border-primary/10 shadow-sm"
                       >
                         <Image
                           src={src}
@@ -248,13 +253,15 @@ export default function AdminPage() {
                       </div>
                     ))}
                     {giftData.photos.length === 0 && (
-                      <span className="text-sm text-gray-400">Sin fotos</span>
+                      <div className="h-24 flex items-center justify-center border-2 border-dashed border-gray-200 rounded-xl w-full">
+                        <span className="text-sm text-gray-400 italic font-serif">Sin fotos disponibles</span>
+                      </div>
                     )}
                   </div>
                 </div>
 
                 <Button
-                  className="w-full font-bold"
+                  className="w-full font-bold text-lg py-6 rounded-xl shadow-lg hover:shadow-xl transition-all"
                   onClick={handleSaveGift}
                   disabled={loadingSave}
                 >

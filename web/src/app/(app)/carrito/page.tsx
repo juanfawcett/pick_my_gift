@@ -8,6 +8,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 export default function CartPage() {
   const { items, updateQuantity, removeItem, clearCart, totalPrice } =
@@ -35,17 +36,17 @@ export default function CartPage() {
 
       const data = await res.json();
       if (res.ok) {
-        alert(
+        toast.success(
           '¡Reserva confirmada con éxito! Muchísimas gracias de parte de Scarlett.',
         );
         clearCart();
         router.push('/regalos');
       } else {
-        alert(`Error al apartar: ${data.error}`);
+        toast.error(`Error al apartar: ${data.error}`);
       }
     } catch (error) {
       console.error(error);
-      alert('Hubo un problema de conexión al despachar.');
+      toast.error('Hubo un problema de conexión al despachar.');
     } finally {
       setLoading(false);
     }

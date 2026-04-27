@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -40,14 +41,15 @@ export default function Home() {
         if (data.needsRegistration) {
           setNeedsName(true);
         } else {
+          toast.success('¡Bienvenido(a)!');
           router.push('/regalos');
         }
       } else {
-        alert(data.error || 'Algo salió mal');
+        toast.error(data.error || 'Algo salió mal');
       }
     } catch (error) {
       console.error(error);
-      alert('Error de conexión');
+      toast.error('Error de conexión');
     } finally {
       setLoading(false);
     }
