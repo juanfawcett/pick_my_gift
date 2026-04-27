@@ -13,9 +13,9 @@ export default async function RegalosPage() {
 
   return (
     <div className="space-y-12 pb-12">
-      <div className="text-center max-w-3xl mx-auto space-y-6 pt-8">
-        <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl">
-          🍼¡Gracias por sumarte a la celebración de nuestra Baby Scarlett!🎁
+      <div className="text-center max-w-5xl mx-auto space-y-6 pt-8">
+        <h1 className="text-4xl md:text-5xl font-serif text-primary tracking-wide">
+          🍼 ¡Gracias por sumarte a la celebración de nuestra Baby Scarlett! 🎁
         </h1>
         
         {/* Guía Visual Paso a Paso */}

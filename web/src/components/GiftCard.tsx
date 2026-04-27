@@ -5,6 +5,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Minus, Plus, ShoppingCart, ExternalLink } from 'lucide-react';
 import Image from 'next/image';
+import { GiftCarousel } from './GiftCarousel';
 import {
   Dialog,
   DialogContent,
@@ -107,20 +108,7 @@ export function GiftCard({ gift }: { gift: Gift }) {
           </DialogDescription>
         </DialogHeader>
 
-        <div className="aspect-square relative w-full bg-gray-100 rounded-md overflow-hidden my-4">
-          {gift.photos && gift.photos.length > 0 ? (
-            <Image
-              src={gift.photos[0]}
-              alt={gift.name}
-              fill
-              className="object-contain"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400">
-              Sin foto
-            </div>
-          )}
-        </div>
+        <GiftCarousel photos={gift.photos} name={gift.name} />
 
         {gift.description && (
           <p className="text-sm text-gray-600 mb-4">{gift.description}</p>
@@ -132,7 +120,7 @@ export function GiftCard({ gift }: { gift: Gift }) {
               href={gift.urlML}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center w-full bg-[#FFE600] hover:bg-[#FFD100] text-[#2D3277] font-bold py-3 px-4 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+              className="flex items-center justify-center w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3 px-4 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
             >
               <ExternalLink className="h-5 w-5 mr-2" />
               Ver Producto en Mercado Libre

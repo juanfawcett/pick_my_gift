@@ -34,10 +34,10 @@ export function Navbar({
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-      <div className="container flex h-16 items-center justify-between px-4 max-w-5xl mx-auto">
+      <div className="container flex h-16 items-center justify-between px-4 max-w-7xl mx-auto">
         <Link
           href="/regalos"
-          className="flex items-center gap-2 font-bold text-primary text-lg"
+          className="flex items-center gap-2 font-serif font-bold text-primary text-lg md:text-xl tracking-wide"
         >
           <span className="text-2xl">🍼</span>
           <span className="hidden sm:inline-block">Baby Shower Scarlett</span>

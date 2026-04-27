@@ -2,7 +2,7 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: hsl(0 75% 97%); /* #fdf1f1 */
+  --background: hsl(0 50% 98%); /* #fdfaf9 - soft watercolor pinkish white */
   --foreground: hsl(0 15% 30%); /* Darkish gray/pink for readable text */
 
   --card: hsl(0 100% 100%);
@@ -11,26 +11,26 @@
   --popover: hsl(0 100% 100%);
   --popover-foreground: hsl(0 15% 30%);
 
-  --primary: hsl(0 58.6% 83.3%); /* #eebbbb */
-  --primary-foreground: hsl(0 50% 20%);
+  --primary: hsl(358 24% 45%); /* #8E5A5A - Dusty rose/brick red for main titles */
+  --primary-foreground: hsl(0 100% 100%);
 
-  --secondary: hsl(0 70.6% 93.7%); /* #fbe3e3 */
-  --secondary-foreground: hsl(0 50% 20%);
+  --secondary: hsl(100 12% 65%); /* #a3b19b - Sage green */
+  --secondary-foreground: hsl(0 100% 100%);
 
-  --muted: hsl(2 75% 90.6%); /* #f9d6d5 */
+  --muted: hsl(0 20% 95%);
   --muted-foreground: hsl(0 15% 50%);
 
-  --accent: hsl(1.3 68.1% 87.3%); /* #f6c8c7 */
-  --accent-foreground: hsl(0 50% 20%);
+  --accent: hsl(10 30% 90%);
+  --accent-foreground: hsl(358 24% 45%);
 
   --destructive: hsl(0 84.2% 60.2%);
   --destructive-foreground: hsl(0 0% 98%);
 
-  --border: hsl(1.3 68.1% 87.3%); /* #f6c8c7 */
-  --input: hsl(1.3 68.1% 87.3%);
-  --ring: hsl(0 58.6% 83.3%); /* #eebbbb */
+  --border: hsl(0 20% 90%);
+  --input: hsl(0 20% 90%);
+  --ring: hsl(358 24% 45%);
 
-  --radius: 0.75rem; /* Rounded soft corners for Baby Shower theme */
+  --radius: 0.75rem;
 }
 
 .dark {
@@ -43,11 +43,11 @@
   --popover: hsl(0 20% 18%);
   --popover-foreground: hsl(0 75% 97%);
 
-  --primary: hsl(0 58.6% 83.3%); /* #eebbbb */
+  --primary: hsl(358 24% 65%);
   --primary-foreground: hsl(0 20% 15%);
 
-  --secondary: hsl(0 25% 25%);
-  --secondary-foreground: hsl(0 75% 97%);
+  --secondary: hsl(100 12% 55%);
+  --secondary-foreground: hsl(0 20% 15%);
 
   --muted: hsl(0 25% 25%);
   --muted-foreground: hsl(0 20% 65%);
@@ -60,7 +60,7 @@
 
   --border: hsl(0 25% 25%);
   --input: hsl(0 25% 25%);
-  --ring: hsl(0 58.6% 83.3%); /* #eebbbb */
+  --ring: hsl(358 24% 65%);
 }
 
 @theme inline {
@@ -89,8 +89,8 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-montserrat);
+  --font-serif: var(--font-playfair);
 }
 
 @layer base {
@@ -102,5 +102,8 @@
   body {
     background-color: var(--background);
     color: var(--foreground);
+    background-image: radial-gradient(circle at 10% 20%, rgba(253, 235, 235, 0.5) 0%, rgba(253, 245, 245, 0) 40%),
+                      radial-gradient(circle at 90% 80%, rgba(253, 235, 235, 0.5) 0%, rgba(253, 245, 245, 0) 40%);
+    background-attachment: fixed;
   }
 }

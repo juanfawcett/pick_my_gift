@@ -8,6 +8,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
 import { ArrowLeft, Gift as GiftIcon, ExternalLink } from 'lucide-react';
+import { GiftCarousel } from '@/components/GiftCarousel';
 import {
   Dialog,
   DialogContent,
@@ -58,10 +59,10 @@ export default async function MisRegalosPage() {
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <div>
-          <h1 className="text-3xl font-extrabold tracking-tight text-gray-900">
+          <h1 className="text-3xl font-serif text-primary tracking-wide">
             Mis regalos elegidos
           </h1>
-          <p className="text-gray-500">
+          <p className="text-gray-500 mt-1">
             Aquí están los detalles que has reservado para Scarlett.
           </p>
         </div>
@@ -136,20 +137,7 @@ export default async function MisRegalosPage() {
                     <DialogTitle>{gift.name}</DialogTitle>
                   </DialogHeader>
 
-                  <div className="aspect-square relative w-full bg-gray-100 rounded-md overflow-hidden my-4">
-                    {gift.photos && gift.photos.length > 0 ? (
-                      <Image
-                        src={gift.photos[0]}
-                        alt={gift.name}
-                        fill
-                        className="object-contain"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        Sin foto
-                      </div>
-                    )}
-                  </div>
+                  <GiftCarousel photos={gift.photos} name={gift.name} />
 
                   {gift.description && (
                     <p className="text-sm text-gray-600 mb-4">{gift.description}</p>
@@ -161,7 +149,7 @@ export default async function MisRegalosPage() {
                         href={gift.urlML}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-center w-full bg-[#FFE600] hover:bg-[#FFD100] text-[#2D3277] font-bold py-3 px-4 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+                        className="flex items-center justify-center w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3 px-4 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
                       >
                         <ExternalLink className="h-5 w-5 mr-2" />
                         Ver Producto en Mercado Libre

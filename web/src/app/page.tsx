@@ -60,11 +60,14 @@ export default function Home() {
           <div className="mx-auto bg-primary/10 rounded-full p-4 mb-2 inline-block">
             <span className="text-4xl">🍼</span>
           </div>
-          <CardTitle className="text-3xl font-extrabold text-primary">
-            Baby Shower de Scarlett
+          <CardTitle className="text-4xl font-serif text-primary tracking-widest uppercase mt-4">
+            Scarlett
           </CardTitle>
-          <CardDescription className="text-base text-gray-500">
-            Ingresa tus datos para ver y elegir los regalitos.
+          <p className="text-sm tracking-[0.2em] text-primary/70 font-serif uppercase">
+            Mi Baby Shower
+          </p>
+          <CardDescription className="text-base text-gray-500 pt-2 italic font-serif">
+            Acompáñanos en este día tan especial
           </CardDescription>
         </CardHeader>
 
