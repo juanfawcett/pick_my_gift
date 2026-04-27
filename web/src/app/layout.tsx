@@ -13,8 +13,14 @@ const montserrat = Montserrat({
 });
 
 export const metadata: Metadata = {
-  title: "Baby Shower Scarlett",
-  description: "Acompáñanos a celebrar el Baby Shower de Scarlett",
+  title: "Baby shower de Scarlett",
+  description: "Celebra con nosotros el baby shower de nuestra baby Scarlett",
+  openGraph: {
+    title: "Baby shower de Scarlett",
+    description: "Celebra con nosotros el baby shower de nuestra baby Scarlett",
+    type: "website",
+    locale: "es_CO",
+  },
 };
 
 import { Toaster } from "@/components/ui/sonner";
