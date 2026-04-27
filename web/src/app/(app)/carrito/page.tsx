@@ -1,7 +1,7 @@
 'use client';
 
 import { useCartStore } from '@/store/cart';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Minus, Plus, Trash2, ShoppingCart } from 'lucide-react';
 import Image from 'next/image';
@@ -63,9 +63,14 @@ export default function CartPage() {
         <p className="text-gray-500 max-w-sm">
           Aún no has seleccionado ningún regalo para Scarlett.
         </p>
-        <Button asChild className="mt-8 font-semibold w-full max-w-xs">
-          <Link href="/regalos">Ver listado de regalos</Link>
-        </Button>
+        <Link
+          href="/regalos"
+          className={buttonVariants({
+            className: "mt-8 font-semibold w-full max-w-xs",
+          })}
+        >
+          Ver listado de regalos
+        </Link>
       </div>
     );
   }

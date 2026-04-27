@@ -49,48 +49,50 @@ export function GiftCard({ gift }: { gift: Gift }) {
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Card
-          className={`overflow-hidden cursor-pointer hover:shadow-md transition-all group ${!isAvailable ? 'opacity-50 grayscale' : ''}`}
-        >
-          <div className="aspect-square relative w-full bg-gray-100">
-            {gift.photos && gift.photos.length > 0 ? (
-              <Image
-                src={gift.photos[0]}
-                alt={gift.name}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-400">
-                Sin foto
-              </div>
-            )}
-            {!isAvailable && (
-              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                <span className="bg-white px-4 py-2 text-sm font-bold rounded shadow uppercase tracking-wide text-gray-800">
-                  Agotado
-                </span>
-              </div>
-            )}
-          </div>
-          <CardContent className="p-4 space-y-2">
-            <h3 className="font-bold text-gray-800 line-clamp-1 leading-snug">
-              {gift.name}
-            </h3>
-            <div className="flex justify-between items-center text-sm font-semibold text-primary">
-              <span>
-                {new Intl.NumberFormat('es-CO', {
-                  style: 'currency',
-                  currency: 'COP',
-                }).format(gift.price)}
-              </span>
-              <span className="text-gray-500 font-normal">
-                Disp: {maxAvailable}
+      <DialogTrigger
+        render={
+          <Card
+            className={`overflow-hidden cursor-pointer hover:shadow-md transition-all group ${!isAvailable ? 'opacity-50 grayscale' : ''}`}
+          />
+        }
+      >
+        <div className="aspect-square relative w-full bg-gray-100">
+          {gift.photos && gift.photos.length > 0 ? (
+            <Image
+              src={gift.photos[0]}
+              alt={gift.name}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-400">
+              Sin foto
+            </div>
+          )}
+          {!isAvailable && (
+            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+              <span className="bg-white px-4 py-2 text-sm font-bold rounded shadow uppercase tracking-wide text-gray-800">
+                Agotado
               </span>
             </div>
-          </CardContent>
-        </Card>
+          )}
+        </div>
+        <CardContent className="p-4 space-y-2">
+          <h3 className="font-bold text-gray-800 line-clamp-1 leading-snug">
+            {gift.name}
+          </h3>
+          <div className="flex justify-between items-center text-sm font-semibold text-primary">
+            <span>
+              {new Intl.NumberFormat('es-CO', {
+                style: 'currency',
+                currency: 'COP',
+              }).format(gift.price)}
+            </span>
+            <span className="text-gray-500 font-normal">
+              Disp: {maxAvailable}
+            </span>
+          </div>
+        </CardContent>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-[425px]">

@@ -8,7 +8,12 @@ if (!MONGODB_URI) {
   );
 }
 
-let cached = global.mongoose;
+declare global {
+  // eslint-disable-next-line no-var
+  var mongoose: { conn: any; promise: any } | undefined;
+}
+
+let cached: { conn: any; promise: any } = global.mongoose as any;
 
 if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
@@ -25,7 +30,7 @@ export async function connectToDatabase() {
       family: 4,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {
+    cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
       return mongoose;
     });
   }
