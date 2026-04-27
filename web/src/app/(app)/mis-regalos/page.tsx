@@ -7,7 +7,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import Link from 'next/link';
 import { buttonVariants } from '@/components/ui/button';
-import { ArrowLeft, Gift as GiftIcon } from 'lucide-react';
+import { ArrowLeft, Gift as GiftIcon, ExternalLink } from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 export const dynamic = 'force-dynamic';
 
@@ -80,45 +87,98 @@ export default async function MisRegalosPage() {
           {misRegalos.map((item, idx) => {
             const gift = item.giftId;
             return (
-              <Card key={idx} className="overflow-hidden shadow-sm hover:shadow-md transition-all">
-                <CardContent className="p-0 flex items-stretch h-32">
-                  <div className="w-32 relative bg-gray-100 shrink-0">
+              <Dialog key={idx}>
+                <DialogTrigger
+                  render={
+                    <Card className="overflow-hidden shadow-sm hover:shadow-md transition-all cursor-pointer text-left h-full" />
+                  }
+                >
+                  <CardContent className="p-0 flex items-stretch h-32">
+                    <div className="w-32 relative bg-gray-100 shrink-0">
+                      {gift.photos && gift.photos.length > 0 ? (
+                        <Image
+                          src={gift.photos[0]}
+                          alt={gift.name}
+                          fill
+                          className="object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                          Sin foto
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 p-4 flex flex-col justify-between">
+                      <div>
+                        <h3 className="font-bold text-gray-800 line-clamp-2 leading-tight text-sm">
+                          {gift.name}
+                        </h3>
+                        <p className="text-xs text-gray-500 mt-1">
+                          Reservado: {new Date(item.transactionDate).toLocaleDateString('es-CO')}
+                        </p>
+                      </div>
+                      <div className="flex justify-between items-end mt-2">
+                        <span className="font-semibold text-primary text-sm">
+                          {new Intl.NumberFormat('es-CO', {
+                            style: 'currency',
+                            currency: 'COP',
+                          }).format(item.priceAtPurchase)}
+                        </span>
+                        <span className="text-xs font-medium bg-gray-100 px-2 py-1 rounded-md text-gray-600">
+                          Cant: {item.quantity}
+                        </span>
+                      </div>
+                    </div>
+                  </CardContent>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>{gift.name}</DialogTitle>
+                  </DialogHeader>
+
+                  <div className="aspect-square relative w-full bg-gray-100 rounded-md overflow-hidden my-4">
                     {gift.photos && gift.photos.length > 0 ? (
                       <Image
                         src={gift.photos[0]}
                         alt={gift.name}
                         fill
-                        className="object-cover"
+                        className="object-contain"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs">
+                      <div className="w-full h-full flex items-center justify-center text-gray-400">
                         Sin foto
                       </div>
                     )}
                   </div>
-                  <div className="flex-1 p-4 flex flex-col justify-between">
-                    <div>
-                      <h3 className="font-bold text-gray-800 line-clamp-2 leading-tight text-sm">
-                        {gift.name}
-                      </h3>
-                      <p className="text-xs text-gray-500 mt-1">
-                        Reservado: {new Date(item.transactionDate).toLocaleDateString('es-CO')}
-                      </p>
+
+                  {gift.description && (
+                    <p className="text-sm text-gray-600 mb-4">{gift.description}</p>
+                  )}
+
+                  {gift.urlML && (
+                    <div className="mb-4 mt-2">
+                      <a
+                        href={gift.urlML}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center w-full bg-[#FFE600] hover:bg-[#FFD100] text-[#2D3277] font-bold py-3 px-4 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+                      >
+                        <ExternalLink className="h-5 w-5 mr-2" />
+                        Ver Producto en Mercado Libre
+                      </a>
                     </div>
-                    <div className="flex justify-between items-end mt-2">
-                      <span className="font-semibold text-primary text-sm">
-                        {new Intl.NumberFormat('es-CO', {
-                          style: 'currency',
-                          currency: 'COP',
-                        }).format(item.priceAtPurchase)}
-                      </span>
-                      <span className="text-xs font-medium bg-gray-100 px-2 py-1 rounded-md text-gray-600">
-                        Cant: {item.quantity}
-                      </span>
-                    </div>
+                  )}
+
+                  <div className="flex justify-between items-center text-sm mt-2 border-t pt-4">
+                    <span className="text-gray-500">
+                      Confirmado el: {new Date(item.transactionDate).toLocaleDateString('es-CO')}
+                    </span>
+                    <span className="font-semibold text-primary">
+                      Cant: {item.quantity}
+                    </span>
                   </div>
-                </CardContent>
-              </Card>
+                </DialogContent>
+              </Dialog>
             );
           })}
         </div>

@@ -127,15 +127,15 @@ export function GiftCard({ gift }: { gift: Gift }) {
         )}
 
         {gift.urlML && (
-          <div className="mb-4">
+          <div className="mb-4 mt-2">
             <a
               href={gift.urlML}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center text-sm font-semibold text-blue-600 hover:text-blue-800 hover:underline"
+              className="flex items-center justify-center w-full bg-[#FFE600] hover:bg-[#FFD100] text-[#2D3277] font-bold py-3 px-4 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
             >
-              <ExternalLink className="h-4 w-4 mr-1" />
-              Ver referencia en Mercado Libre
+              <ExternalLink className="h-5 w-5 mr-2" />
+              Ver Producto en Mercado Libre
             </a>
           </div>
         )}
