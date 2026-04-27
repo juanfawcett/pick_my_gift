@@ -25,7 +25,7 @@ export default async function RegalosPage() {
             <MousePointerClick className="h-8 w-8 text-primary mb-3" />
             <h3 className="font-bold text-gray-800 text-lg mb-1">1. Elige</h3>
             <p className="text-sm text-gray-500 leading-relaxed">
-              Haz clic en el detalle que más te guste y agrégalo al carrito. Si está gris, alguien se te adelantó.
+              Haz clic en el/los detalle(s) que más te guste(n) y agrégalo(s) al carrito. Si está(n) gris, alguien se te adelantó.
             </p>
           </div>
 
@@ -34,7 +34,7 @@ export default async function RegalosPage() {
             <ExternalLink className="h-8 w-8 text-blue-500 mb-3" />
             <h3 className="font-bold text-gray-800 text-lg mb-1">2. Revisa</h3>
             <p className="text-sm text-gray-500 leading-relaxed">
-              Los precios son de referencia. Usa el enlace de Mercado Libre para verlo y cómpralo donde prefieras.
+              Los precios son de referencia. Usa el enlace de Mercado Libre para ver los detalles y comprarlo(s) ahí o donde prefieras.
             </p>
           </div>
 
@@ -43,7 +43,7 @@ export default async function RegalosPage() {
             <CheckCircle2 className="h-8 w-8 text-green-500 mb-3" />
             <h3 className="font-bold text-gray-800 text-lg mb-1">3. Confirma</h3>
             <p className="text-sm text-gray-500 leading-relaxed">
-              Ve a tu carrito y finaliza. No pagarás nada aquí, solo nos confirmas qué regalo traerás.
+              Ve a tu carrito y finaliza. No pagarás nada aquí, solo nos confirmas el/los detalle(s) que traerás.
             </p>
           </div>
 

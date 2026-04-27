@@ -162,7 +162,7 @@ export default function AdminPage() {
               Panel de Administrador
             </h1>
             <p className="text-gray-500">
-              Agrega nuevos regalos pegando un link de MercadoLibre.
+              Agrega nuevos regalos pegando un link de MercadoLibre o Amazon.
             </p>
           </div>
           <Button
@@ -178,7 +178,7 @@ export default function AdminPage() {
           <div className="space-y-6">
             <Card className="p-0">
               <CardHeader className="pt-6 px-6 pb-4">
-                <CardTitle>1. Link de MercadoLibre</CardTitle>
+                <CardTitle>1. Link de MercadoLibre o Amazon</CardTitle>
                 <CardDescription>
                   Copia y pega la URL del producto que quieres añadir a la lista
                   de regalos.
@@ -187,7 +187,7 @@ export default function AdminPage() {
               <CardContent className="px-6 pb-6">
                 <form onSubmit={handleScrape} className="flex gap-2">
                   <Input
-                    placeholder="https://articulo.mercadolibre.com.co/..."
+                    placeholder="Link de MercadoLibre o Amazon..."
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
                     required
