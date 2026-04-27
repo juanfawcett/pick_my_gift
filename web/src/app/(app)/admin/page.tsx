@@ -280,7 +280,7 @@ export default function AdminPage() {
                     onClick={handleSaveGift}
                     disabled={loadingSave}
                   >
-                    {loadingSave ? 'Guardando en BD...' : 'Guardar Regalo'}
+                    {loadingSave ? 'Guardando...' : 'Guardar Regalo'}
                   </Button>
                 </CardContent>
               </Card>
