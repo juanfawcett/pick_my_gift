@@ -25,6 +25,7 @@ export const metadata: Metadata = {
 
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { FloatingCart } from "@/components/FloatingCart";
 
 export default function RootLayout({
   children,
@@ -40,6 +41,7 @@ export default function RootLayout({
         <TooltipProvider>
           {children}
           <Toaster position="top-center" richColors />
+          <FloatingCart />
         </TooltipProvider>
       </body>
     </html>

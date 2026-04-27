@@ -29,9 +29,21 @@ export async function PATCH(
       return NextResponse.json({ error: 'Stock requerido' }, { status: 400 });
     }
 
+    if (body.stock < 0) {
+      return NextResponse.json(
+        { error: 'El stock no puede ser negativo' },
+        { status: 400 },
+      );
+    }
+
+    const updateData: any = { 
+      stock: body.stock,
+      status: body.stock > 0 ? 'available' : 'unavailable'
+    };
+
     const updatedGift = await Gift.findByIdAndUpdate(
       id,
-      { stock: body.stock },
+      updateData,
       { new: true }
     );
 

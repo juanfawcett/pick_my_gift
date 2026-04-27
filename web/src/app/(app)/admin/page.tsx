@@ -193,7 +193,7 @@ export default function AdminPage() {
                     required
                   />
                   <Button type="submit" disabled={loadingScrape || !url}>
-                    {loadingScrape ? 'Buscando...' : 'Extraer Data'}
+                    {loadingScrape ? 'Buscando...' : 'Extraer Información'}
                   </Button>
                 </form>
               </CardContent>
@@ -321,10 +321,15 @@ export default function AdminPage() {
                         <Input
                           key={`${gift._id}-${gift.stock}`}
                           type="number"
+                          min={0}
                           className="h-7 w-16 text-xs"
                           defaultValue={gift.stock}
                           onBlur={(e) => {
                             const val = parseInt(e.target.value);
+                            if (isNaN(val) || val < 0) {
+                              e.target.value = gift.stock.toString();
+                              return;
+                            }
                             if (val !== gift.stock) handleUpdateStock(gift._id, val);
                           }}
                         />

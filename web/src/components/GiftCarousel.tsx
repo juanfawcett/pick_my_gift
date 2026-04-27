@@ -15,14 +15,14 @@ export function GiftCarousel({ photos, name }: GiftCarouselProps) {
 
   if (!photos || photos.length === 0) {
     return (
-      <div className="aspect-square relative w-full bg-gray-100 rounded-md overflow-hidden my-4 flex items-center justify-center text-gray-400">
+      <div className="aspect-square relative w-full bg-white rounded-md overflow-hidden my-4 flex items-center justify-center text-gray-400">
         Sin foto
       </div>
     );
   }
 
   return (
-    <div className="aspect-square relative w-full bg-gray-100 rounded-md overflow-hidden my-4 group">
+    <div className="aspect-square relative w-full bg-white rounded-md overflow-hidden my-4 group">
       <Image
         src={photos[currentPhotoIndex]}
         alt={name}
