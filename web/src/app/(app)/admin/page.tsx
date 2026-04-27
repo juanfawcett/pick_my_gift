@@ -118,6 +118,25 @@ export default function AdminPage() {
     }
   };
 
+  const handleUpdateStock = async (id: string, newStock: number) => {
+    if (newStock < 0) return alert('El stock no puede ser negativo');
+    try {
+      const res = await fetch(`/api/admin/gifts/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ stock: newStock }),
+      });
+      if (res.ok) {
+        fetchGifts();
+      } else {
+        alert('No se pudo actualizar el stock');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Error de conexión');
+    }
+  };
+
   return (
     <div className="space-y-12">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b pb-4 gap-4">
@@ -275,9 +294,20 @@ export default function AdminPage() {
                     <h4 className="font-bold text-sm text-gray-900 truncate">
                       {gift.name}
                     </h4>
-                    <p className="text-xs text-gray-500">
-                      Stock: {gift.stock} | Estado: {gift.status}
-                    </p>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-[10px] uppercase font-semibold text-gray-400">Stock:</span>
+                      <Input
+                        key={`${gift._id}-${gift.stock}`}
+                        type="number"
+                        className="h-7 w-16 text-xs"
+                        defaultValue={gift.stock}
+                        onBlur={(e) => {
+                          const val = parseInt(e.target.value);
+                          if (val !== gift.stock) handleUpdateStock(gift._id, val);
+                        }}
+                      />
+                      <span className="text-[10px] text-gray-400 uppercase">Estado: {gift.status}</span>
+                    </div>
                   </div>
                   <Button
                     variant="ghost"
