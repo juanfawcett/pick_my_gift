@@ -4,13 +4,14 @@ import Gift from '@/models/Gift';
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     await connectToDatabase();
-    await Gift.findByIdAndDelete(params.id);
+    const { id } = await params;
+    await Gift.findByIdAndDelete(id);
     return NextResponse.json({ success: true });
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error deleting gift:', error);
     return NextResponse.json({ error: 'Error interno' }, { status: 500 });
   }
