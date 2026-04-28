@@ -191,43 +191,46 @@ export function GiftCard({ gift }: { gift: Gift }) {
                   )}
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center bg-gray-50 rounded-2xl p-1 border border-gray-100">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-10 w-10 text-primary hover:bg-white hover:shadow-sm rounded-xl"
-                      onClick={() =>
-                        setSelectedQuantity(Math.max(1, selectedQuantity - 1))
-                      }
-                      disabled={isExhaustedDB || selectedQuantity <= 1}
-                    >
-                      <Minus className="h-4 w-4" />
-                    </Button>
-                    <div className="w-10 text-center font-bold text-gray-700">
-                      {selectedQuantity}
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Cantidad</span>
+                    <div className="flex items-center bg-gray-50 rounded-2xl p-1 border border-gray-100">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-10 w-10 text-primary hover:bg-white hover:shadow-sm rounded-xl"
+                        onClick={() =>
+                          setSelectedQuantity(Math.max(1, selectedQuantity - 1))
+                        }
+                        disabled={isExhaustedDB || selectedQuantity <= 1}
+                      >
+                        <Minus className="h-4 w-4" />
+                      </Button>
+                      <div className="w-10 text-center font-bold text-gray-700">
+                        {selectedQuantity}
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-10 w-10 text-primary hover:bg-white hover:shadow-sm rounded-xl"
+                        onClick={() =>
+                          setSelectedQuantity(
+                            Math.min(maxAvailable, selectedQuantity + 1),
+                          )
+                        }
+                        disabled={isExhaustedDB || isExhaustedUser || selectedQuantity >= maxAvailable}
+                      >
+                        <Plus className="h-4 w-4" />
+                      </Button>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-10 w-10 text-primary hover:bg-white hover:shadow-sm rounded-xl"
-                      onClick={() =>
-                        setSelectedQuantity(
-                          Math.min(maxAvailable, selectedQuantity + 1),
-                        )
-                      }
-                      disabled={isExhaustedDB || isExhaustedUser || selectedQuantity >= maxAvailable}
-                    >
-                      <Plus className="h-4 w-4" />
-                    </Button>
                   </div>
 
                   <Button
-                    className="flex-1 h-12 rounded-2xl font-bold shadow-lg shadow-primary/20 transition-all active:scale-95 disabled:opacity-50"
+                    className="w-full h-14 rounded-2xl font-bold text-base shadow-lg shadow-primary/20 transition-all active:scale-95 disabled:opacity-50"
                     onClick={handleAddToCart}
                     disabled={isExhaustedDB || isExhaustedUser}
                   >
-                    <ShoppingCart className="h-5 w-5 mr-2" />
+                    <ShoppingCart className="h-5 w-5 mr-2 shrink-0" />
                     {isExhaustedDB 
                       ? 'Agotado' 
                       : isExhaustedUser 
