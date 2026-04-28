@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -12,7 +12,7 @@ import {
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import Image from 'next/image';
-import { Trash2 } from 'lucide-react';
+import { Trash2, ArrowDownAZ, ArrowUpAZ, ArrowDownNarrowWide, ArrowUpNarrowWide } from 'lucide-react';
 import { toast } from 'sonner';
 import { ConfirmationDialog } from '@/components/ui/confirmation-dialog';
 
@@ -36,6 +36,18 @@ export default function AdminPage() {
   const [existingGifts, setExistingGifts] = useState<any[]>([]);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [adminSort, setAdminSort] = useState<'default' | 'name-asc' | 'name-desc' | 'price-asc' | 'price-desc'>('default');
+
+  const sortedGifts = useMemo(() => {
+    const list = [...existingGifts];
+    switch (adminSort) {
+      case 'name-asc':  return list.sort((a, b) => a.name.localeCompare(b.name, 'es'));
+      case 'name-desc': return list.sort((a, b) => b.name.localeCompare(a.name, 'es'));
+      case 'price-asc': return list.sort((a, b) => a.price - b.price);
+      case 'price-desc':return list.sort((a, b) => b.price - a.price);
+      default:          return list;
+    }
+  }, [existingGifts, adminSort]);
 
   const fetchGifts = async () => {
     try {
@@ -340,8 +352,31 @@ export default function AdminPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="px-6 pb-6">
-              <div className="space-y-3 max-h-[600px] overflow-y-auto pr-2">
-                {existingGifts.map((gift) => (
+              {/* Sort controls */}
+              <div className="flex flex-wrap items-center gap-2 mb-4">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mr-1">Ordenar:</span>
+                {[
+                  { key: 'name-asc' as const, label: 'A → Z', icon: <ArrowDownAZ className="h-3.5 w-3.5" /> },
+                  { key: 'name-desc' as const, label: 'Z → A', icon: <ArrowUpAZ className="h-3.5 w-3.5" /> },
+                  { key: 'price-asc' as const, label: '$ ↑', icon: <ArrowDownNarrowWide className="h-3.5 w-3.5" /> },
+                  { key: 'price-desc' as const, label: '$ ↓', icon: <ArrowUpNarrowWide className="h-3.5 w-3.5" /> },
+                ].map((opt) => (
+                  <Button
+                    key={opt.key}
+                    variant={adminSort === opt.key ? 'default' : 'outline'}
+                    size="sm"
+                    className={`rounded-full gap-1 text-xs h-7 px-3 font-semibold ${
+                      adminSort === opt.key ? 'shadow-sm' : 'text-gray-500 border-gray-200'
+                    }`}
+                    onClick={() => setAdminSort(adminSort === opt.key ? 'default' : opt.key)}
+                  >
+                    {opt.icon}
+                    {opt.label}
+                  </Button>
+                ))}
+              </div>
+              <div className="space-y-3 max-h-[520px] overflow-y-auto pr-2">
+                {sortedGifts.map((gift) => (
                   <div
                     key={gift._id}
                     className="flex items-center gap-3 border p-3 rounded-lg bg-white"

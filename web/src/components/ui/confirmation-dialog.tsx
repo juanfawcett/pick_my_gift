@@ -33,14 +33,14 @@ export function ConfirmationDialog({
 }: ConfirmationDialogProps) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-md p-8">
+        <DialogHeader className="space-y-2">
           <DialogTitle className="text-xl font-serif text-primary">{title}</DialogTitle>
-          <DialogDescription className="font-sans">
+          <DialogDescription className="font-sans text-base">
             {description}
           </DialogDescription>
         </DialogHeader>
-        <div className="mt-8 flex flex-col-reverse sm:flex-row justify-end gap-3">
+        <div className="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-3">
           <Button 
             variant="outline" 
             className="rounded-xl font-semibold px-6 h-11"

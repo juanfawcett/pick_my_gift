@@ -1,15 +1,15 @@
 import { connectToDatabase } from '@/lib/db';
 import Gift from '@/models/Gift';
-import { GiftCard } from '@/components/GiftCard';
+import { GiftGrid } from '@/components/GiftGrid';
 import { MousePointerClick, ExternalLink, CheckCircle2, CalendarHeart } from 'lucide-react';
 
-export const dynamic = 'force-dynamic'; // Para asegurarnos de que la consulta sea en tiempo real al entrar
+export const dynamic = 'force-dynamic';
 
 export default async function RegalosPage() {
   await connectToDatabase();
 
-  // Obtenemos los regalos ordenados por fecha de creación (los más nuevos primero)
   const regalos = await Gift.find().sort({ createdAt: -1 }).lean();
+  const gifts = regalos.map((r: any) => ({ ...r, _id: r._id.toString() }));
 
   return (
     <div className="space-y-12 pb-12">
@@ -58,25 +58,7 @@ export default async function RegalosPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
-        {regalos.map((regalo: any) => (
-          <GiftCard
-            key={regalo._id.toString()}
-            gift={{
-              ...regalo,
-              _id: regalo._id.toString(),
-            }}
-          />
-        ))}
-      </div>
-
-      {regalos.length === 0 && (
-        <div className="text-center py-24 bg-gray-50 rounded-2xl border-2 border-dashed">
-          <p className="text-gray-500">
-            Aún no hay regalos disponibles, visítanos pronto.
-          </p>
-        </div>
-      )}
+      <GiftGrid gifts={gifts} />
     </div>
   );
 }
