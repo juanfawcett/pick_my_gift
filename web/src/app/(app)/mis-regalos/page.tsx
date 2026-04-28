@@ -134,38 +134,40 @@ export default async function MisRegalosPage() {
                     </div>
                   </CardContent>
                 </DialogTrigger>
-                <DialogContent className="sm:max-w-[425px]">
-                  <DialogHeader>
-                    <DialogTitle>{gift.name}</DialogTitle>
+                <DialogContent>
+                  <DialogHeader className="pt-8 px-8 pb-2">
+                    <DialogTitle className="font-serif text-2xl text-primary leading-tight">{gift.name}</DialogTitle>
                   </DialogHeader>
 
-                  <GiftCarousel photos={gift.photos} name={gift.name} />
+                  <div className="px-8">
+                    <GiftCarousel photos={gift.photos} name={gift.name} />
+                  </div>
 
-                  {gift.description && (
-                    <p className="text-sm text-gray-600 mb-4">{gift.description}</p>
-                  )}
+                  <div className="px-8 pb-8 space-y-4">
+                    {gift.description && (
+                      <p className="text-sm text-gray-600 leading-relaxed">{gift.description}</p>
+                    )}
 
-                  {gift.urlML && (
-                    <div className="mb-4 mt-2">
+                    {gift.urlML && (
                       <a
                         href={gift.urlML}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center justify-center w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3 px-4 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+                        className="flex items-center justify-center w-full bg-primary hover:bg-primary/90 text-white font-bold py-3.5 px-4 rounded-2xl shadow-md hover:shadow-lg transition-all active:scale-[0.98] text-sm"
                       >
-                        <ExternalLink className="h-5 w-5 mr-2" />
-                        Ver Producto en Mercado Libre
+                        <ExternalLink className="h-4 w-4 mr-2 shrink-0" />
+                        Ver Producto en {gift.storeName || (gift.urlML.includes('amazon') ? 'Amazon' : 'Mercado Libre')}
                       </a>
-                    </div>
-                  )}
+                    )}
 
-                  <div className="flex justify-between items-center text-sm mt-2 border-t pt-4">
-                    <span className="text-gray-500">
-                      Confirmado el: {new Date(item.transactionDate).toLocaleDateString('es-CO')}
-                    </span>
-                    <span className="font-semibold text-primary">
-                      Cant: {item.quantity}
-                    </span>
+                    <div className="flex justify-between items-center text-sm border-t pt-4">
+                      <span className="text-gray-500">
+                        Confirmado el: {new Date(item.transactionDate).toLocaleDateString('es-CO')}
+                      </span>
+                      <span className="font-semibold text-primary">
+                        Cant: {item.quantity}
+                      </span>
+                    </div>
                   </div>
                 </DialogContent>
               </Dialog>
