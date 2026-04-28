@@ -1,18 +1,41 @@
 import { connectToDatabase } from '@/lib/db';
 import Gift from '@/models/Gift';
 import { GiftGrid } from '@/components/GiftGrid';
-import { MousePointerClick, ExternalLink, CheckCircle2, CalendarHeart } from 'lucide-react';
+import { MousePointerClick, ExternalLink, CheckCircle2, CalendarHeart, ArrowRight, Gift as GiftIcon } from 'lucide-react';
+import { cookies } from 'next/headers';
+import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
 export default async function RegalosPage() {
   await connectToDatabase();
+  const cookieStore = await cookies();
+  const hasSelectedGifts = cookieStore.has('auth_user');
 
   const regalos = await Gift.find().sort({ createdAt: -1 }).lean();
   const gifts = regalos.map((r: any) => ({ ...r, _id: r._id.toString() }));
 
   return (
     <div className="space-y-12 pb-12">
+      {hasSelectedGifts && (
+        <div className="bg-primary/5 border border-primary/20 p-4 rounded-2xl flex items-center justify-between gap-4 animate-in slide-in-from-top-4 duration-500">
+          <div className="flex items-center gap-3">
+            <div className="bg-primary/10 p-2 rounded-full hidden sm:block">
+              <GiftIcon className="h-5 w-5 text-primary" />
+            </div>
+            <p className="text-sm font-medium text-gray-700">
+              Ya tienes regalos reservados. Puedes ver los detalles y links de compra en tu sección personal.
+            </p>
+          </div>
+          <Link 
+            href="/mis-regalos" 
+            className="flex items-center gap-1.5 bg-primary text-white px-4 py-2 rounded-xl text-xs font-bold shrink-0 hover:shadow-lg transition-all active:scale-95"
+          >
+            Ver mis regalos
+            <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        </div>
+      )}
       <div className="text-center max-w-5xl mx-auto space-y-6 pt-8">
         <h1 className="text-4xl md:text-5xl font-serif text-primary tracking-wide">
           🍼 ¡Gracias por sumarte a la celebración de nuestra baby Scarlett! 🎁

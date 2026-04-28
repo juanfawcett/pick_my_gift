@@ -40,7 +40,7 @@ export default function CartPage() {
           '¡Reserva confirmada con éxito! Muchísimas gracias de parte de Scarlett.',
         );
         clearCart();
-        router.push('/regalos');
+        router.push('/mis-regalos');
       } else {
         toast.error(`Error al apartar: ${data.error}`);
       }
