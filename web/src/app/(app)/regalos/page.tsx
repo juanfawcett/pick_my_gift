@@ -15,9 +15,11 @@ export default async function RegalosPage() {
     <div className="space-y-12 pb-12">
       <div className="text-center max-w-5xl mx-auto space-y-6 pt-8">
         <h1 className="text-4xl md:text-5xl font-serif text-primary tracking-wide">
-          🍼 ¡Gracias por sumarte a la celebración de nuestra Baby Scarlett! 🎁
+          🍼 ¡Gracias por sumarte a la celebración de nuestra baby Scarlett! 🎁
         </h1>
-        
+        <h2 className="text-xl md:text-2xl font-serif text-primary tracking-wide text-rose-500">
+          Sigue estos pasos para seleccionar tu(s) regalo(s)
+        </h2>
         {/* Guía Visual Paso a Paso */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-left mt-8">
           <div className="bg-white p-5 rounded-2xl shadow-sm border border-primary/10 hover:shadow-md transition-shadow relative overflow-hidden group">

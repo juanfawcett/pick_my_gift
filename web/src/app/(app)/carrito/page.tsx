@@ -201,7 +201,7 @@ export default function CartPage() {
               onClick={handleCheckout}
               disabled={loading}
             >
-              {loading ? 'Confirmando reserva...' : 'Confirmar Regalos'}
+              {loading ? 'Confirmando...' : 'Confirmar Regalo(s)'}
             </Button>
             <p className="text-xs text-center text-gray-400 font-medium">
               No se generarán cobros, es una lista de reserva.

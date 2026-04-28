@@ -262,7 +262,7 @@ export function GiftCard({ gift }: { gift: Gift }) {
             </div>
             
             <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10">
-              <p className="text-xs text-primary font-bold uppercase tracking-wider mb-2">Paso importante</p>
+              <p className="text-xs text-primary font-bold uppercase tracking-wider mb-2 text-rose-500">¡Paso importante!</p>
               <p className="text-gray-600 text-sm">
                 Recuerda que debes <span className="font-bold">confirmar tu regalo</span> en el carrito para que quede reservado oficialmente.
               </p>

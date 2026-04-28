@@ -69,7 +69,7 @@ export default function Home() {
             Mi Baby Shower
           </p>
           <CardDescription className="text-base text-gray-500 pt-2 italic font-serif">
-            Acompáñanos en este día tan especial
+            Sistema de Selección de Regalos
           </CardDescription>
         </CardHeader>
 
@@ -78,36 +78,33 @@ export default function Home() {
             {!needsName ? (
               <div className="space-y-2">
                 <Label htmlFor="phone" className="text-gray-700 font-medium">
-                  Número de celular
+                  Escribe tu número de celular
                 </Label>
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="Ej. 3001234567"
+                  placeholder="Click aquí para escribir..."
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   disabled={loading}
                   required
                   className="text-base py-6 focus-visible:ring-primary"
                 />
-                <p className="text-sm text-gray-400 pt-1">
-                  Ingresa tu número para entrar o registrarte.
-                </p>
               </div>
             ) : (
               <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <div className="bg-primary/10 p-3 rounded-md border border-primary/20 text-center">
                   <p className="text-sm text-primary font-medium">
-                    Parece que eres nuevo(a). Por favor, dinos tu nombre para identificarte en los regalos.
+                    Parece que eres nuevo(a). Por favor, dinos tu nombre para identificarte.
                   </p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="name" className="text-gray-700 font-medium">
-                    Nombre completo
+                    Escribe tu nombre completo
                   </Label>
                   <Input
                     id="name"
-                    placeholder="Ej. Juan Pérez"
+                    placeholder="Click aquí para escribir..."
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     disabled={loading}
@@ -124,7 +121,7 @@ export default function Home() {
               className="w-full text-lg py-6 font-bold"
               disabled={loading || !phone || (needsName && !name)}
             >
-              {loading ? 'Cargando...' : needsName ? 'Completar registro' : 'Entrar a la lista'}
+              {loading ? 'Cargando...' : needsName ? 'Completar registro' : 'Ingresar'}
             </Button>
           </form>
         </CardContent>
