@@ -141,7 +141,7 @@ export function GiftCard({ gift }: { gift: Gift }) {
         </CardContent>
       </DialogTrigger>
 
-      <DialogContent className="overflow-hidden">
+      <DialogContent>
         {step === 'details' ? (
           <>
             <DialogHeader className="pt-8 px-8">
