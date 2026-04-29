@@ -1,5 +1,6 @@
 import { connectToDatabase } from '@/lib/db';
 import Gift from '@/models/Gift';
+import Transaction from '@/models/Transaction';
 import { GiftGrid } from '@/components/GiftGrid';
 import { MousePointerClick, ExternalLink, CheckCircle2, CalendarHeart, ArrowRight, Gift as GiftIcon } from 'lucide-react';
 import { cookies } from 'next/headers';
@@ -10,7 +11,18 @@ export const dynamic = 'force-dynamic';
 export default async function RegalosPage() {
   await connectToDatabase();
   const cookieStore = await cookies();
-  const hasSelectedGifts = cookieStore.has('auth_user');
+  const authCookie = cookieStore.get('auth_user')?.value;
+  
+  let hasSelectedGifts = false;
+  if (authCookie) {
+    try {
+      const user = JSON.parse(authCookie);
+      const transactionExists = await Transaction.exists({ user: user.id });
+      hasSelectedGifts = !!transactionExists;
+    } catch (e) {
+      console.error("Error checking transactions:", e);
+    }
+  }
 
   const regalos = await Gift.find().sort({ createdAt: -1 }).lean();
   const gifts = regalos.map((r: any) => ({ ...r, _id: r._id.toString() }));
