@@ -59,7 +59,7 @@ export default async function RegalosPage() {
             <ExternalLink className="h-8 w-8 text-blue-500 mb-3" />
             <h3 className="font-bold text-gray-800 text-lg mb-1">2. Revisa</h3>
             <p className="text-sm text-gray-500 leading-relaxed">
-              Los precios son de referencia. Usa el enlace de Mercado Libre para ver los detalles y comprarlo(s) ahí o donde prefieras.
+              Los precios son de referencia. Usa el link del producto para ver los detalles y comprarlo(s) en esa tienda o donde prefieras.
             </p>
           </div>
 
