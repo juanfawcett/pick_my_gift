@@ -15,6 +15,15 @@ import Link from 'next/link';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import Image from 'next/image';
+import { Gift as GiftIcon, ExternalLink } from 'lucide-react';
+import { GiftCarousel } from '@/components/GiftCarousel';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,32 +33,52 @@ export default async function AdminReservasPage() {
   const transactionsRaw = (await Transaction.find()
     .sort({ createdAt: -1 })
     .populate('user', 'name phone')
-    .populate('items.giftId', 'name photos price status')
+    .populate('items.giftId', 'name photos price status description urlML storeName')
     .lean()) as any[];
 
-  // Convertimos temporalmente algunos campos a strings simples (para que React pueda serializar a JSON en el RSC)
-  const transactions = transactionsRaw.map((t) => ({
-    _id: t._id.toString(),
-    createdAt: t.createdAt.toISOString(),
-    total: t.total,
-    user: t.user
-      ? {
+  const groupedByUser: Record<string, any> = {};
+  let totalGiftsSelected = 0;
+
+  transactionsRaw.forEach((t) => {
+    const userId = t.user?._id?.toString() || 'unknown';
+    if (!groupedByUser[userId]) {
+      groupedByUser[userId] = {
+        _id: userId,
+        user: t.user ? {
           name: t.user.name,
           phone: t.user.phone,
-        }
-      : null,
-    items: t.items.map((item: any) => ({
-      quantity: item.quantity,
-      priceAtPurchase: item.priceAtPurchase,
-      giftId: item.giftId
-        ? {
-            _id: item.giftId._id.toString(),
-            name: item.giftId.name,
-            photos: item.giftId.photos || [],
-          }
-        : null,
-    })),
-  }));
+        } : null,
+        items: [],
+        total: 0,
+        lastTransactionDate: t.createdAt,
+      };
+    }
+    
+    t.items.forEach((item: any) => {
+      totalGiftsSelected += item.quantity;
+      groupedByUser[userId].items.push({
+        quantity: item.quantity,
+        priceAtPurchase: item.priceAtPurchase,
+        giftId: item.giftId ? {
+          _id: item.giftId._id.toString(),
+          name: item.giftId.name,
+          photos: item.giftId.photos || [],
+          description: item.giftId.description,
+          urlML: item.giftId.urlML,
+          storeName: item.giftId.storeName,
+        } : null,
+      });
+      groupedByUser[userId].total += item.priceAtPurchase * item.quantity;
+    });
+    
+    if (new Date(t.createdAt) > new Date(groupedByUser[userId].lastTransactionDate)) {
+      groupedByUser[userId].lastTransactionDate = t.createdAt;
+    }
+  });
+
+  const transactions = Object.values(groupedByUser).sort((a: any, b: any) => 
+    new Date(b.lastTransactionDate).getTime() - new Date(a.lastTransactionDate).getTime()
+  );
 
   return (
     <div className="space-y-8">
@@ -71,6 +100,18 @@ export default async function AdminReservasPage() {
             Volver a Inventario
           </Button>
         </Link>
+      </div>
+
+      <div className="bg-primary/5 rounded-2xl p-6 border border-primary/10 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="bg-primary/10 p-3 rounded-full">
+            <GiftIcon className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <p className="text-sm font-medium text-primary/70 uppercase tracking-wider">Total regalos seleccionados</p>
+            <p className="text-3xl font-bold text-primary">{totalGiftsSelected}</p>
+          </div>
+        </div>
       </div>
 
       {transactions.length === 0 ? (
@@ -99,21 +140,21 @@ export default async function AdminReservasPage() {
                       </span>
                     </div>
                   </div>
-                  <div className="md:text-right space-y-1">
-                    <p className="text-[10px] font-bold text-primary/60 uppercase tracking-[0.2em]">
-                      Recibido el
-                    </p>
-                    <p className="text-gray-700 font-semibold text-sm">
-                      {format(
-                        new Date(t.createdAt),
-                        "d 'de' MMMM, yyyy",
-                        { locale: es }
-                      )}
-                    </p>
-                    <p className="text-gray-400 text-xs">
-                      {format(new Date(t.createdAt), "h:mm a", { locale: es })}
-                    </p>
-                  </div>
+                    <div className="md:text-right space-y-1">
+                      <p className="text-[10px] font-bold text-primary/60 uppercase tracking-[0.2em]">
+                        Última actividad
+                      </p>
+                      <p className="text-gray-700 font-semibold text-sm">
+                        {format(
+                          new Date(t.lastTransactionDate),
+                          "d 'de' MMMM, yyyy",
+                          { locale: es }
+                        )}
+                      </p>
+                      <p className="text-gray-400 text-xs">
+                        {format(new Date(t.lastTransactionDate), "h:mm a", { locale: es })}
+                      </p>
+                    </div>
                 </div>
               </CardHeader>
               <CardContent className="pt-8 px-6 pb-8">
@@ -129,60 +170,103 @@ export default async function AdminReservasPage() {
                   <ul className="space-y-4">
                     {t.items.map((item: any, idx: number) => {
                       const gift = item.giftId;
+                      if (!gift) return null;
                       return (
-                        <li
-                          key={idx}
-                          className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white border border-primary/5 p-4 rounded-2xl shadow-sm hover:shadow-md transition-shadow"
-                        >
-                          <div className="flex items-center gap-4 w-full">
-                            <div className="h-20 w-20 bg-gray-50 rounded-xl overflow-hidden relative shrink-0 border border-primary/10 flex items-center justify-center">
-                              {gift?.photos?.[0] ? (
-                                <Image
-                                  src={gift.photos[0]}
-                                  alt={gift.name || 'Regalo'}
-                                  fill
-                                  className="object-cover"
-                                />
-                              ) : (
-                                <span className="text-[10px] text-gray-400 italic">Sin foto</span>
-                              )}
-                            </div>
-                            <div className="flex-1">
-                              <p className="font-bold text-gray-900 leading-tight mb-1">
-                                {gift
-                                  ? gift.name
-                                  : '🎁 Regalo eliminado'}
-                              </p>
-                              <div className="flex items-center text-xs text-gray-500 font-medium">
-                                <span className="bg-primary/5 text-primary px-2 py-0.5 rounded-md">
-                                  Llevó {item.quantity} ud.
-                                </span>
-                                <span className="mx-2 opacity-30">|</span>
-                                <span>
+                        <Dialog key={idx}>
+                          <DialogTrigger
+                            nativeButton={false}
+                            render={
+                              <li className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white border border-primary/5 p-4 rounded-2xl shadow-sm hover:shadow-md transition-shadow cursor-pointer" />
+                            }
+                          >
+                            <div className="flex items-center gap-4 w-full">
+                                <div className="h-20 w-20 bg-gray-50 rounded-xl overflow-hidden relative shrink-0 border border-primary/10 flex items-center justify-center">
+                                  {gift?.photos?.[0] ? (
+                                    <Image
+                                      src={gift.photos[0]}
+                                      alt={gift.name || 'Regalo'}
+                                      fill
+                                      className="object-cover"
+                                    />
+                                  ) : (
+                                    <span className="text-[10px] text-gray-400 italic">Sin foto</span>
+                                  )}
+                                </div>
+                                <div className="flex-1">
+                                  <p className="font-bold text-gray-900 leading-tight mb-1">
+                                    {gift.name}
+                                  </p>
+                                  <div className="flex items-center text-xs text-gray-500 font-medium">
+                                    <span className="bg-primary/5 text-primary px-2 py-0.5 rounded-md">
+                                      Llevó {item.quantity} ud.
+                                    </span>
+                                    <span className="mx-2 opacity-30">|</span>
+                                    <span>
+                                      {new Intl.NumberFormat('es-CO', {
+                                        style: 'currency',
+                                        currency: 'COP',
+                                        maximumFractionDigits: 0,
+                                      }).format(item.priceAtPurchase)}{' '}
+                                      / c/u
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div className="text-right shrink-0 pt-4 sm:pt-0 border-t sm:border-0 border-primary/5 w-full sm:w-auto">
+                                <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1 hidden sm:block">
+                                  Subtotal
+                                </p>
+                                <p className="font-bold text-gray-900 text-base">
                                   {new Intl.NumberFormat('es-CO', {
                                     style: 'currency',
                                     currency: 'COP',
                                     maximumFractionDigits: 0,
-                                  }).format(item.priceAtPurchase)}{' '}
-                                  / c/u
+                                  }).format(item.priceAtPurchase * item.quantity)}
+                                </p>
+                              </div>
+                            </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader className="pt-8 px-8 pb-2">
+                              <DialogTitle className="font-serif text-2xl text-primary leading-tight">{gift.name}</DialogTitle>
+                            </DialogHeader>
+
+                            <div className="px-8">
+                              <GiftCarousel photos={gift.photos} name={gift.name} />
+                            </div>
+
+                            <div className="px-8 pb-8 space-y-4">
+                              {gift.description && (
+                                <p className="text-sm text-gray-600 leading-relaxed">{gift.description}</p>
+                              )}
+
+                              {gift.urlML && (
+                                <a
+                                  href={gift.urlML}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="flex items-center justify-center w-full bg-primary hover:bg-primary/90 text-white font-bold py-3.5 px-4 rounded-2xl shadow-md hover:shadow-lg transition-all active:scale-[0.98] text-sm"
+                                >
+                                  <ExternalLink className="h-4 w-4 mr-2 shrink-0" />
+                                  Ver Producto en {gift.storeName || (gift.urlML.includes('amazon') ? 'Amazon' : 'Mercado Libre')}
+                                </a>
+                              )}
+
+                              <div className="flex justify-between items-center text-sm border-t pt-4">
+                                <span className="text-gray-500">
+                                  Precio al comprar: {new Intl.NumberFormat('es-CO', {
+                                    style: 'currency',
+                                    currency: 'COP',
+                                    maximumFractionDigits: 0,
+                                  }).format(item.priceAtPurchase)}
+                                </span>
+                                <span className="font-semibold text-primary">
+                                  Cant: {item.quantity}
                                 </span>
                               </div>
                             </div>
-                          </div>
-
-                          <div className="text-right shrink-0 pt-4 sm:pt-0 border-t sm:border-0 border-primary/5 w-full sm:w-auto">
-                            <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-1 hidden sm:block">
-                              Subtotal
-                            </p>
-                            <p className="font-bold text-gray-900 text-base">
-                              {new Intl.NumberFormat('es-CO', {
-                                style: 'currency',
-                                currency: 'COP',
-                                maximumFractionDigits: 0,
-                              }).format(item.priceAtPurchase * item.quantity)}
-                            </p>
-                          </div>
-                        </li>
+                          </DialogContent>
+                        </Dialog>
                       );
                     })}
                   </ul>
