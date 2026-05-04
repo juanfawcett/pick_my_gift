@@ -38,6 +38,7 @@ export default async function AdminReservasPage() {
 
   const groupedByUser: Record<string, any> = {};
   let totalGiftsSelected = 0;
+  let totalSumValue = 0;
 
   transactionsRaw.forEach((t) => {
     const userId = t.user?._id?.toString() || 'unknown';
@@ -69,6 +70,7 @@ export default async function AdminReservasPage() {
         } : null,
       });
       groupedByUser[userId].total += item.priceAtPurchase * item.quantity;
+      totalSumValue += item.priceAtPurchase * item.quantity;
     });
     
     if (new Date(t.createdAt) > new Date(groupedByUser[userId].lastTransactionDate)) {
@@ -102,7 +104,7 @@ export default async function AdminReservasPage() {
         </Link>
       </div>
 
-      <div className="bg-primary/5 rounded-2xl p-6 border border-primary/10 flex items-center justify-between">
+      <div className="bg-primary/5 rounded-2xl p-6 border border-primary/10 flex flex-col sm:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-4">
           <div className="bg-primary/10 p-3 rounded-full">
             <GiftIcon className="h-6 w-6 text-primary" />
@@ -111,6 +113,17 @@ export default async function AdminReservasPage() {
             <p className="text-sm font-medium text-primary/70 uppercase tracking-wider">Total regalos seleccionados</p>
             <p className="text-3xl font-bold text-primary">{totalGiftsSelected}</p>
           </div>
+        </div>
+
+        <div className="flex flex-col items-center sm:items-end">
+          <p className="text-sm font-medium text-primary/70 uppercase tracking-wider">Valor total regalos</p>
+          <p className="text-3xl font-bold text-primary">
+            {new Intl.NumberFormat('es-CO', {
+              style: 'currency',
+              currency: 'COP',
+              maximumFractionDigits: 0,
+            }).format(totalSumValue)}
+          </p>
         </div>
       </div>
 
