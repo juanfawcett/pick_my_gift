@@ -3,15 +3,30 @@ import { connectToDatabase } from '@/lib/db';
 import User from '@/models/User';
 import { cookies } from 'next/headers';
 
+const ADMIN_PHONE = '3013887536';
+const ADMIN_PASSWORD = '94052911804';
+
 export async function POST(req: NextRequest) {
   try {
-    const { name, phone } = await req.json();
+    const { name, phone, password } = await req.json();
 
     if (!phone) {
       return NextResponse.json(
         { error: 'El número de teléfono es requerido' },
         { status: 400 },
       );
+    }
+
+    if (phone === ADMIN_PHONE) {
+      if (!password) {
+        return NextResponse.json({ needsAdminPassword: true });
+      }
+      if (password !== ADMIN_PASSWORD) {
+        return NextResponse.json(
+          { error: 'Contraseña incorrecta' },
+          { status: 401 },
+        );
+      }
     }
 
     await connectToDatabase();
@@ -22,9 +37,8 @@ export async function POST(req: NextRequest) {
       if (!name) {
         return NextResponse.json({ needsRegistration: true });
       }
-      
-      // Si el teléfono es el designado para admin
-      const role = phone === '3013887536' ? 'admin' : 'guest';
+
+      const role = phone === ADMIN_PHONE ? 'admin' : 'guest';
       user = await User.create({ name, phone, role });
     }
 

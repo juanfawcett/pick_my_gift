@@ -18,17 +18,23 @@ export default function Home() {
   const router = useRouter();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [needsName, setNeedsName] = useState(false);
+  const [needsAdminPassword, setNeedsAdminPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!phone) return;
+    if (needsAdminPassword && !password) return;
     if (needsName && !name) return;
 
     setLoading(true);
     try {
-      const body = needsName ? { phone, name } : { phone };
+      const body: Record<string, string> = { phone };
+      if (needsAdminPassword || password) body.password = password;
+      if (needsName && name) body.name = name;
+
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -38,7 +44,9 @@ export default function Home() {
       const data = await res.json();
 
       if (res.ok) {
-        if (data.needsRegistration) {
+        if (data.needsAdminPassword) {
+          setNeedsAdminPassword(true);
+        } else if (data.needsRegistration) {
           setNeedsName(true);
         } else {
           toast.success('¡Bienvenido(a)!');
@@ -75,7 +83,7 @@ export default function Home() {
 
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
-            {!needsName ? (
+            {!needsAdminPassword && !needsName ? (
               <div className="space-y-2">
                 <Label htmlFor="phone" className="text-gray-700 font-medium">
                   Escribe tu número de celular
@@ -90,6 +98,30 @@ export default function Home() {
                   required
                   className="text-base py-6 focus-visible:ring-primary"
                 />
+              </div>
+            ) : needsAdminPassword && !needsName ? (
+              <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                <div className="bg-primary/10 p-3 rounded-md border border-primary/20 text-center">
+                  <p className="text-sm text-primary font-medium">
+                    Ingresa la contraseña de administrador.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-gray-700 font-medium">
+                    Contraseña
+                  </Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Click aquí para escribir..."
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={loading}
+                    required
+                    autoFocus
+                    className="text-base py-6 focus-visible:ring-primary"
+                  />
+                </div>
               </div>
             ) : (
               <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
@@ -119,9 +151,9 @@ export default function Home() {
             <Button
               type="submit"
               className="w-full text-lg py-6 font-bold"
-              disabled={loading || !phone || (needsName && !name)}
+              disabled={loading || !phone || (needsAdminPassword && !password) || (needsName && !name)}
             >
-              {loading ? 'Cargando...' : needsName ? 'Completar registro' : 'Ingresar'}
+              {loading ? 'Cargando...' : needsName ? 'Completar registro' : needsAdminPassword ? 'Verificar' : 'Ingresar'}
             </Button>
           </form>
         </CardContent>
