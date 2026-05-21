@@ -25,9 +25,15 @@ export async function connectToDatabase() {
   }
 
   if (!cached.promise) {
+    const dbNameMatch = MONGODB_URI?.match(
+      /^mongodb(?:\+srv)?:\/\/.+\/([^?]+)/,
+    );
+    const dbName = dbNameMatch ? dbNameMatch[1] : undefined;
+
     const opts = {
       bufferCommands: false,
       family: 4,
+      ...(dbName && { dbName }), // Fuerza el nombre de la BD si se extrajo de la URI
     };
 
     cached.promise = mongoose.connect(MONGODB_URI!, opts).then((mongoose) => {
